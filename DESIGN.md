@@ -5,14 +5,14 @@ colors:
   flare: "#7cc4ff"
   flare-hover: "#a6d7ff"
   flare-core: "#cfeaff"
-  flare-deep: "#3f8fd6"
   ground: "#07080a"
   ground-raised: "#0d0f12"
   ground-focus: "#14171b"
   letterbox-black: "#000000"
   warm-white: "#eceae6"
   ash: "#a9adb3"
-  smoke: "#7a7f86"
+  smoke: "#8b9097"
+  dim: "#4d535b"
   dimmed-title: "#3b4047"
   hairline: "rgba(236, 234, 230, 0.12)"
   hairline-strong: "rgba(236, 234, 230, 0.22)"
@@ -46,7 +46,7 @@ typography:
     fontFamily: "General Sans, Helvetica Neue, Arial, sans-serif"
     fontSize: "clamp(1.3rem, 2.3vw, 2.1rem)"
     fontWeight: 500
-    lineHeight: 1.25
+    lineHeight: 1.3
     letterSpacing: "-0.015em"
   body:
     fontFamily: "General Sans, Helvetica Neue, Arial, sans-serif"
@@ -148,7 +148,6 @@ A near-monochrome cool night with one cold point of light.
 - **Anamorphic Flare Blue** (`flare`): the single accent. Used for the primary action ("Book a shoot", "Send enquiry"), focus outlines, text selection, the active nav underline, the input focus border, the project play button's hover ring and the confirmation panel outline. As light, it is the colour of every streak and letterbox hairline.
 - **Flare Hover** (`flare-hover`): the primary button's hover fill only.
 - **Flare Core** (`flare-core`): the hot white-blue centre of a streak gradient. Never a fill or text colour.
-- **Deep Flare** (`flare-deep`): defined in the root token set for the darker end of the flare; reserved, not a surface colour.
 
 ### Neutral
 - **Lens-Cap Ground** (`ground`): the page, the header's solid state (at 82% with blur), the menu overlay, text on flare buttons.
@@ -157,8 +156,9 @@ A near-monochrome cool night with one cold point of light.
 - **Letterbox Black** (`letterbox-black`): pure black behind all framed footage, the letterbox bars, the full-screen viewers. It is deliberately darker than the ground so frames read as a projection inside the page.
 - **Warm White** (`warm-white`): headlines, body text, the pressed filter fill.
 - **Ash** (`ash`): secondary copy, nav links at rest, captions (8.6:1 on ground).
-- **Smoke** (`smoke`): mono labels, placeholders, footer text (4.9:1 on ground).
-- **Dimmed Title** (`dimmed-title`): the colour non-hovered titles in the selected-work list drop to while one row is hovered; inactive discipline names use a near-identical value.
+- **Smoke** (`smoke`): mono labels, placeholders, footer text (6.2:1 on ground).
+- **Dim** (`dim`): resting discipline names on the home page before scroll makes them active (3:1, large text only).
+- **Dimmed Title** (`dimmed-title`): the colour non-hovered titles in the selected-work list drop to while one row is hovered; inactive discipline names use `dim`.
 - **Hairline / Strong Hairline** (`hairline`, `hairline-strong`): list rules, section dividers, footer rule (12%); ghost button, filter and input strokes (22%).
 - **Error Coral** (`error-coral`): form validation text and invalid field borders only.
 
@@ -181,7 +181,7 @@ A near-monochrome cool night with one cold point of light.
 - **Headline** (800, `headline`, 0.92, uppercase): section titles.
 - **Title** (800, `title`, 0.92, uppercase): discipline names, card titles, step titles, the form confirmation.
 - **Fitted Titles**: selected-work titles on the home page are sized by script so each fills the full measure (30px to 150px), edge to edge.
-- **Lede** (500, `lede`, 1.25, max 30ch, balanced): statements and introductions.
+- **Lede** (500, `lede`, 1.3, max 30ch, balanced): statements and introductions.
 - **Body** (400, 17px, 1.6): reading copy, 34ch to 46ch measures.
 - **Label** (Geist Mono 400, 12px, 0.04em, uppercase, tabular numerals, smoke): metadata such as kind, ratio, year, credits roles and reel length.
 

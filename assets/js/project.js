@@ -32,7 +32,7 @@
     <section class="stills" aria-label="Stills">${p.stills.map((s, n) => `<figure class="lbx" data-letterbox><img src="${s}" alt="Still ${n + 1} from ${p.title}" loading="lazy" /></figure>`).join("")}</section>
     <a class="next" href="project.html?p=${next.id}" style="margin-top:clamp(96px,15vh,180px)">
       <span class="next__bg"><img src="${next.poster}" alt="" loading="lazy" /></span>
-      <span class="next__inner"><span class="label">Next film</span><span class="display h1" style="display:block" data-desq>${next.title}</span></span>
+      <span class="next__inner"><span class="display h1" style="display:block" data-desq>${next.title}</span><span class="next__go">Next film ${ARROW}</span></span>
     </a>
     <div data-close></div>`;
 

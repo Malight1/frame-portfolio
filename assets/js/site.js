@@ -24,13 +24,15 @@
     <div class="menu" id="menu" data-menu><button class="menu__close" type="button" data-menu-close>Close</button><a href="index.html">Home</a>${nav.map(([h, l]) => `<a href="${h}">${l}</a>`).join("")}</div>`;
 
   FX.renderClose = () => { const close = $("[data-close]");
-  if (close) close.outerHTML = `
-    <section class="close" aria-labelledby="close-title">
+  // the contact page is the booking page: it ends on the footer, not a second call to book
+  const call = page === "contact" ? "" : `
       <h2 class="display close__title" id="close-title" data-desq>Have something<br />to shoot?</h2>
       <div class="close__row">
         <a class="btn btn--flare btn--lg" href="contact.html">Book a shoot ${ARROW}</a>
         <a class="link close__mail" href="${mailto}">${S.email}</a>
-      </div>
+      </div>`;
+  if (close) close.outerHTML = `
+    <section class="close${call ? "" : " close--foot"}"${call ? ' aria-labelledby="close-title"' : ' aria-label="Footer"'}>${call}
       <footer class="foot">
         <span>© ${new Date().getFullYear()} ${S.name}</span>
         <nav aria-label="Footer">${nav.map(([h, l]) => `<a href="${h}">${l}</a>`).join("")}</nav>
