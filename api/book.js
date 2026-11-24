@@ -41,7 +41,8 @@ export default async function handler(req, res) {
   const site = (process.env.SITE_URL || "https://frame-portfolio-orpin.vercel.app").replace(/\/$/, "");
   const verified = process.env.BOOKING_FROM;
   const from = verified || "Riah Visuals Bookings <onboarding@resend.dev>";
-  const riah = process.env.BOOKING_TO || "seraiahamaike98@gmail.com";
+  // Lowercased: Resend matches the test recipient against the account email exactly, and Gmail ignores case.
+  const riah = (process.env.BOOKING_TO || "seraiahamaike98@gmail.com").trim().toLowerCase();
 
   const toRiah = bookingEmail(v, site);
   const ok = await send(key, { from, to: [riah], reply_to: v.email, subject: toRiah.subject, html: toRiah.html, text: toRiah.text });
