@@ -11,7 +11,7 @@ function Cinema() {
   const stage = useRef(null), vid = useRef(null);
   const r = SITE.reels[cur];
   useEffect(() => {
-    vid.current?.play().catch(() => {});
+    vid.current?.play().catch(() => { });
     if (!reduceMotion()) stage.current.animate([{ opacity: 0.4 }, { opacity: 1 }], { duration: 450, easing: "ease-out" });
   }, [cur]);
   const pick = (i) => { if (matchMedia("(max-width: 960px)").matches && i === cur) openReels(SITE.reels, i); setCur(i); };

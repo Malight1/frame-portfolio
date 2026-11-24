@@ -129,7 +129,7 @@ function Films() {
   const root = useRef(null), vids = useRef([]);
   useEffect(() => { const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.35 }); io.observe(root.current); return () => io.disconnect(); }, []);
   useEffect(() => {
-    vids.current.forEach((v, i) => { if (!v) return; if (i === cur && seen) { if (!v.src) v.src = FILMS[i].loop; v.play().catch(() => {}); } else v.pause(); });
+    vids.current.forEach((v, i) => { if (!v) return; if (i === cur && seen) { if (!v.src) v.src = FILMS[i].loop; v.play().catch(() => { }); } else v.pause(); });
   }, [cur, seen]);
   useEffect(() => {
     if (!seen || hold || reduceMotion()) return;
@@ -240,12 +240,12 @@ function Questions() {
   return (
     <section className="section" aria-labelledby="faq-title">
       <div className="wrap faq-split">
+        <Faq />
         <div className="rv">
           <h2 className="display h2" id="faq-title">Questions</h2>
           <p className="lead" style={{ marginTop: 14 }}>Something else on your mind? Ask me on Instagram.</p>
           <a className="btn btn--line" href={SITE.instagram} target="_blank" rel="noopener" style={{ marginTop: 26 }}><Icon name="ig" />{SITE.handle}</a>
         </div>
-        <Faq />
       </div>
     </section>
   );

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { SITE } from "../content.js";
 import { Icon, usePageTitle } from "../components/ui.jsx";
@@ -5,25 +6,35 @@ import { ServiceMedia } from "../components/ServiceMedia.jsx";
 import { Steps } from "./Home.jsx";
 import Faq from "../components/Faq.jsx";
 
+const GROUPS = [["photography", "Photography", "photo"], ["videography", "Videography", "video"]];
+
 export default function Services() {
   usePageTitle("Services, Riah Visuals");
+  // highlight the section currently under the switcher
+  const [active, setActive] = useState("photography");
+  useEffect(() => {
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)), { rootMargin: "-45% 0px -50% 0px" });
+    GROUPS.forEach(([id]) => { const el = document.getElementById(id); if (el) io.observe(el); });
+    return () => io.disconnect();
+  }, []);
   return (
     <div className="wrap">
       <header className="sv-head">
         <h1 className="display">Services</h1>
         <div>
-          <p className="lead">Six services in photos and video, for people, brands and events. Pick one, see what you get, and book it.</p>
-          <div className="hero__ctas" style={{ marginTop: 22 }}>
-            <Link className="btn btn--accent" to="/book">Book a shoot</Link>
-            <Link className="btn btn--line" to="/portfolio">See the portfolio<Icon name="arrow" /></Link>
-          </div>
+          <p className="lead">Photo and video services for people, brands and events. Pick one to see what you get, then book it.</p>
         </div>
       </header>
-      <nav className="sv-index" aria-label="Services on this page">
-        <a className="tab" href="#photography"><Icon name="camera" />Photography</a>
-        <a className="tab" href="#videography"><Icon name="video" />Videography</a>
+      <nav className="sv-switch" aria-label="Jump to a section">
+        <div className="sv-switch__in">
+          {GROUPS.map(([id, title, type]) => (
+            <a key={id} href={`#${id}`} aria-current={active === id ? "true" : undefined}>
+              <Icon name={type === "video" ? "video" : "camera"} />{title}<span>{SITE.services.filter((s) => s.type === type).length}</span>
+            </a>
+          ))}
+        </div>
       </nav>
-      {[["photography", "Photography", "photo"], ["videography", "Videography", "video"]].map(([id, title, type]) => (
+      {GROUPS.map(([id, title, type]) => (
         <section key={id} id={id} className="sv-sec" aria-labelledby={`${id}-title`}>
           <h2 className="display h2 sv-sec__title" id={`${id}-title`}>{title}</h2>
           <div className="stack">
