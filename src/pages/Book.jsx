@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SITE } from "../content.js";
 import { Icon, usePageTitle } from "../components/ui.jsx";
 
@@ -20,10 +20,12 @@ function check(v) {
     service: v.service ? "" : "Choose the kind of shoot.",
     client: v.client.trim() ? "" : "Please add your name.",
     email: !v.email.trim() ? "Please add your email so I can reply." : EMAIL.test(v.email.trim()) ? "" : "That email looks incomplete, for example name@example.com.",
+    date: v.date && v.date < today() ? "Please pick today or a future date." : "",
     message: v.message.trim().length >= 10 ? "" : "Add a sentence or two about the shoot.",
   };
 }
-const ORDER = ["need", "service", "client", "email", "message"];
+const ORDER = ["need", "service", "date", "client", "email", "message"];
+const today = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
 const fmtDate = (d) => (d ? new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "");
 
 export default function Book() {
@@ -37,7 +39,7 @@ export default function Book() {
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
   const trap = useRef(null);
-  const refs = { need: useRef(null), service: useRef(null), client: useRef(null), email: useRef(null), message: useRef(null) };
+  const refs = { need: useRef(null), service: useRef(null), date: useRef(null), client: useRef(null), email: useRef(null), message: useRef(null) };
   const doneRef = useRef(null);
 
   const update = (k, val) => { const next = { ...v, [k]: val }; setV(next); if (err[k]) setErr((x) => ({ ...x, [k]: check(next)[k] })); };
@@ -120,7 +122,7 @@ export default function Book() {
                     </select>
                     <p className="err" id="e-service">{err.service}</p>
                   </div>
-                  <div className="field"><label htmlFor="f-date">Date <small>(if you know it)</small></label><input id="f-date" type="date" value={v.date} onChange={set("date")} /></div>
+                  <div className="field" data-invalid={err.date ? "" : undefined}><label htmlFor="f-date">Date <small>(if you know it)</small></label><input id="f-date" ref={refs.date} type="date" min={today()} value={v.date} onChange={set("date")} onBlur={blur("date")} {...field("date")} /><p className="err" id="e-date">{err.date}</p></div>
                   <div className="field"><label htmlFor="f-where">Where <small>(area or venue)</small></label><input id="f-where" value={v.where} onChange={set("where")} /></div>
                 </div>
               </div>
@@ -147,7 +149,7 @@ export default function Book() {
               <p>Need an answer sooner? Message me on Instagram.</p>
               <div className="row">
                 <a className="btn btn--ink" href={SITE.instagram} target="_blank" rel="noopener"><Icon name="ig" />Message on Instagram</a>
-                <button className="btn btn--line" type="button" onClick={() => { setDone(false); setV({ need: "", service: "", client: "", email: "", phone: "", date: "", where: "", message: "" }); }}>Send another request</button>
+                <Link className="btn btn--line" to="/portfolio">See the portfolio</Link>
               </div>
             </div>
           )}
