@@ -20,6 +20,7 @@ export default function About() {
           <h1 className="display h1">I'm {SITE.name}.</h1>
           <p className="lead">{A.lead}</p>
           {A.text.map((t) => <p key={t} style={{ color: "var(--ink-2)" }}>{t}</p>)}
+          {A.close && <p className="about__close">{A.close}</p>}
           <div className="hero__ctas">
             <Link className="btn btn--accent" to="/book">Book a shoot</Link>
             <a className="btn btn--line" href={SITE.instagram} target="_blank" rel="noopener"><Icon name="ig" />{SITE.handle}</a>

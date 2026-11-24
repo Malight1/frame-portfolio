@@ -388,7 +388,7 @@ ul, ol { list-style: none; }
 .intro__me { margin: 0; border-radius: var(--r); overflow: hidden; aspect-ratio: 4 / 5; box-shadow: 0 30px 60px -30px rgba(14,21,37,.45); }
 .intro__me img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 .intro__me:hover img { transform: scale(1.04); }
-.intro__text { font-family: var(--display); font-weight: 500; font-size: clamp(1.7rem, 3.4vw, 3.1rem); line-height: 1.12; letter-spacing: -.02em; max-width: 26ch; }
+.intro__text { font-family: var(--display); font-weight: 500; font-size: clamp(1.45rem, 2.6vw, 2.4rem); line-height: 1.18; letter-spacing: -.015em; max-width: 30ch; }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .intro__text span { animation: lit linear both; animation-timeline: view(); animation-range: cover 18% cover 42%; }
@@ -721,7 +721,7 @@ fieldset[aria-describedby] .err { margin-top: 10px; }
   .faq__a p { padding: 0 18px 18px; }
   .cta { padding: 28px 22px; }
   .hero h1 { font-size: clamp(3.2rem, 16vw, 4.4rem); }
-  .intro__text { font-size: 1.6rem; }
+  .intro__text { font-size: 1.35rem; }
   .pf-head .display, .sv-head .display { font-size: clamp(3rem, 15vw, 4.2rem); }
   .h1 { font-size: clamp(2.6rem, 13vw, 3.6rem); }
   .h2 { font-size: clamp(2rem, 9.5vw, 2.6rem); }
@@ -733,3 +733,27 @@ fieldset[aria-describedby] .err { margin-top: 10px; }
 .send-fail { border-radius: 14px; background: #fdecea; color: #7a1d12; padding: 14px 16px; font-size: 15px; line-height: 1.5; }
 .send-fail a { color: inherit; font-weight: 700; text-decoration: underline; }
 .btn:disabled { opacity: .7; cursor: progress; transform: none; }
+
+.about__close { margin-top: 18px; font-family: var(--display); font-weight: 600; font-size: clamp(1.2rem, 1.8vw, 1.5rem); letter-spacing: -.01em; color: var(--ink); }
+
+/* Calmer heading scale: big enough to lead, never shouting */
+.h1 { font-size: clamp(2.4rem, 4.8vw, 4.4rem); }
+.h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); }
+.hero h1 { font-size: clamp(3rem, 6vw, 5.6rem); }
+.pf-head .display, .sv-head .display { font-size: clamp(2.6rem, 5.6vw, 4.8rem); line-height: .95; }
+.cta .display { font-size: clamp(2.2rem, 4.4vw, 4rem); }
+.stage__info h3 { font-size: clamp(1.8rem, 2.8vw, 2.7rem); }
+.svcard__name, .svcard h2 { font-size: clamp(1.6rem, 2.5vw, 2.3rem); }
+.klist b { font-size: clamp(1.3rem, 2vw, 1.8rem); }
+.intro__text { font-size: clamp(1.35rem, 2.2vw, 2.05rem); }
+.about__close { font-size: clamp(1.1rem, 1.5vw, 1.3rem); }
+@media (max-width: 640px) {
+  .h1 { font-size: clamp(2.1rem, 9.5vw, 2.7rem); }
+  .h2 { font-size: clamp(1.7rem, 7.2vw, 2.1rem); }
+  .hero h1 { font-size: clamp(2.7rem, 12.5vw, 3.4rem); }
+  .pf-head .display, .sv-head .display { font-size: clamp(2.3rem, 10.5vw, 2.9rem); }
+  .cta .display { font-size: clamp(2rem, 9vw, 2.5rem); }
+  .stage__info h3 { font-size: 1.7rem; }
+  .svcard__name { font-size: 1.6rem; }
+  .intro__text { font-size: 1.25rem; }
+}

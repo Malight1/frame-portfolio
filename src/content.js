@@ -42,7 +42,7 @@ export const SITE = {
       gets: ["Speakers, panels and audience shots", "Branding and venue details", "Quick edits for posting that week"], img: "/media/riah/p38", img2: "/media/riah/p39", see: "/portfolio?k=events#photos" },
     { id: "video", type: "video", name: "Video coverage", line: "Events, conferences and launches, filmed and cut into a highlight film and short reels.",
       covers: "Event highlights, conference recaps, reels and behind the scenes",
-      gets: ["Filming from start to finish", "A highlight film of the day", "Short cuts for Reels and TikTok"], img: "/media/riah/reel5", video: "/media/riah/reel5-loop.mp4", img2: "/media/riah/reel2", video2: "/media/riah/reel2-loop.mp4", see: "/portfolio#films" },
+      gets: ["Filming from start to finish", "A highlight film of the day", "Short cuts for Reels and TikTok"], img: "/media/riah/reel5", video: "/media/riah/reel5-loop.mp4", img2: "/media/riah/reel1", video2: "/media/riah/reel1-loop.mp4", see: "/portfolio#films" },
     { id: "films", type: "video", name: "Fashion & brand films", line: "Fashion films, brand documentaries and short films, planned, shot and edited for you.",
       covers: "Fashion films, brand documentaries, short films and concepts",
       gets: ["Idea and shot list planned together", "Filmed and edited for you", "Vertical and wide versions"], img: "/media/riah/reel4", video: "/media/riah/reel4-loop.mp4", img2: "/media/riah/reel6", video2: "/media/riah/reel6-loop.mp4", see: "/portfolio#films" },
@@ -143,11 +143,14 @@ export const SITE = {
   about: {
     photo: "/media/riah/me-portrait.jpg",
     working: ["/media/riah/me-shoot-1.jpg", "/media/riah/me-shoot-2.jpg"],
-    lead: "I'm Seraiah, a photographer and videographer. I shoot fashion, portraits, convocations, events and documentary films.",
+    // Seraiah's own words for the About page
+    lead: "I'm a photographer and videographer passionate about capturing moments, telling stories and creating visuals that leave an impression.",
     text: [
-      "I like to play with colour, so we plan the outfits and the location together and the photos come out bold and true to you.",
-      "I work with creators, designers, brands and graduates, and I cover conferences and events from start to finish.",
+      "From portraits and street photography to lifestyle, events, creative campaigns and cinematic films, I bring ideas to life through photography and video.",
+      "I believe every frame has a story to tell. Whether I'm behind a camera or exploring new creative perspectives, my goal is to create visuals that feel authentic, intentional and memorable.",
+      "I work with individuals, brands, creatives and businesses to turn ideas and moments into compelling visual experiences.",
     ],
+    close: "Let's create something worth remembering.",
     steps: [
       { name: "Message me", note: "Tell me the date, the place and what you want to shoot." },
       { name: "We plan it", note: "We agree the look, the outfits, the locations and the price." },
