@@ -1,6 +1,6 @@
 # Riah Visuals
 
-Portfolio website for Seraiah (Riah Visuals), mobile photographer and videographer.
+Portfolio website for Seraiah (Riah Visuals), photographer and videographer.
 React + Vite, hosted on Vercel.
 
 ## Run it locally

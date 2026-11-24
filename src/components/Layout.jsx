@@ -57,7 +57,8 @@ function Header() {
   const loc = useLocation();
   useEffect(() => { const io = new IntersectionObserver(([e]) => setScrolled(!e.isIntersecting)); io.observe(sentinel.current); return () => io.disconnect(); }, []);
   useEffect(() => setOpen(false), [loc.pathname]);
-  useEffect(() => { document.body.style.overflow = open ? "hidden" : ""; (open ? closeBtn : openBtn).current?.focus({ preventScroll: true }); }, [open]);
+  const opened = useRef(false);
+  useEffect(() => { document.body.style.overflow = open ? "hidden" : ""; if (open) opened.current = true; if (opened.current) (open ? closeBtn : openBtn).current?.focus({ preventScroll: true }); }, [open]);
   const onBook = loc.pathname === "/book";
   return (
     <>

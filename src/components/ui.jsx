@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Play, Pause, ArrowRight, ArrowUpRight, CaretLeft, CaretRight, X, List,
-  SpeakerHigh, SpeakerSlash, MagnifyingGlassPlus, InstagramLogo,
+  SpeakerHigh, SpeakerSlash, MagnifyingGlassPlus, InstagramLogo, Camera, VideoCamera, Stack, Plus, Check,
 } from "@phosphor-icons/react";
 import { SITE } from "../content.js";
 
@@ -10,6 +10,7 @@ const ICONS = {
   play: [Play, "fill"], pause: [Pause, "fill"], arrow: [ArrowRight, "bold"], ext: [ArrowUpRight, "bold"],
   left: [CaretLeft, "bold"], right: [CaretRight, "bold"], close: [X, "bold"], menu: [List, "bold"],
   sound: [SpeakerHigh, "bold"], mute: [SpeakerSlash, "bold"], zoom: [MagnifyingGlassPlus, "bold"], ig: [InstagramLogo, "bold"],
+  camera: [Camera, "regular"], video: [VideoCamera, "regular"], both: [Stack, "regular"], plus: [Plus, "bold"], check: [Check, "bold"],
 };
 export function Icon({ name, className = "" }) {
   const [C, weight] = ICONS[name];
@@ -18,13 +19,18 @@ export function Icon({ name, className = "" }) {
 
 export const kindName = (id) => (SITE.kinds.find((k) => k.id === id) || {}).name || "";
 export const baseOf = (p) => p.src.replace(/\.jpg$/, "");
-export const srcset = (base) => `${base}-s.jpg 640w, ${base}-m.jpg 1100w, ${base}.jpg 1650w`;
+export const srcset = (base, ext = "jpg") => `${base}-s.${ext} 640w, ${base}-m.${ext} 1100w, ${base}.${ext} 1600w`;
 export const reduceMotion = () => typeof window !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 export const canHover = () => typeof window !== "undefined" && matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 /* A photo with small, medium and large sources, so every screen loads a sharp one. */
-export function Pic({ base, alt, sizes = "(max-width: 760px) 100vw, 50vw", className, width, height }) {
-  return <img src={`${base}-m.jpg`} srcSet={srcset(base)} sizes={sizes} alt={alt} loading="lazy" decoding="async" className={className} width={width} height={height} />;
+export function Pic({ base, alt, sizes = "(max-width: 760px) 100vw, 50vw", className, width, height, eager }) {
+  return (
+    <picture className={className ? `${className}-pic` : undefined}>
+      <source type="image/webp" srcSet={srcset(base, "webp")} sizes={sizes} />
+      <img src={`${base}-m.jpg`} srcSet={srcset(base)} sizes={sizes} alt={alt} loading={eager ? "eager" : "lazy"} decoding="async" className={className} width={width} height={height} />
+    </picture>
+  );
 }
 
 /* Plays a muted clip only while it is on screen. */
@@ -41,11 +47,11 @@ export function LazyLoop({ src, poster, className, onPlaying }) {
   return <video ref={ref} className={className} poster={poster} muted loop playsInline preload="none" aria-hidden="true" />;
 }
 
-/* A vertical reel card: the clip plays silently on screen; tap opens the full viewer. */
+/* A film card in its own shape (tall or wide, never cropped): the clip plays silently on screen; tap opens the viewer. */
 export function ReelCard({ reel, onOpen }) {
   const [playing, setPlaying] = useState(false);
   return (
-    <button className={`reel${playing ? " is-playing" : ""}`} type="button" onClick={onOpen} aria-label={`Watch ${reel.title}, ${kindName(reel.kind)}, ${reel.length}`}>
+    <button className={`reel${playing ? " is-playing" : ""}${reel.ratio > 1 ? " is-wide" : ""}`} style={{ "--ratio": reel.ratio }} type="button" onClick={onOpen} aria-label={`Watch ${reel.title}, ${kindName(reel.kind)}, ${reel.length}`}>
       <span className="reel__media">
         <img src={reel.poster} alt="" loading="lazy" />
         <LazyLoop src={reel.loop} onPlaying={() => setPlaying(true)} />

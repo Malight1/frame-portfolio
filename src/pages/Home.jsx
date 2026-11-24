@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SITE } from "../content.js";
-import { Icon, Pic, ReelCard, LazyLoop, baseOf, canHover, reduceMotion, useTrackArrows, usePageTitle } from "../components/ui.jsx";
+import { Icon, Pic, LazyLoop, baseOf, canHover, kindName, reduceMotion, usePageTitle } from "../components/ui.jsx";
 import { useViewers } from "../components/Viewers.jsx";
 import { useReady } from "../components/Layout.jsx";
 import { initFluid } from "../components/fluid-engine.js";
+import Faq from "../components/Faq.jsx";
+import { ServiceMedia } from "../components/ServiceMedia.jsx";
 
-const R = (id) => SITE.reels.find((r) => r.id === id);
-const FAN = [R("this-very-day"), R("everyone-gets-fazzy"), R("bloopers")];
-const WORDS = ["Street style", "Convocation", "Final-year week", "Portraits", "Brand films", "Short films", "Behind the scenes"];
+export const R = (id) => SITE.reels.find((r) => r.id === id);
+const FAN = [R("estaz"), R("waterfront"), R("welum")];
+const WORDS = ["Fashion", "Lifestyle", "Portraits", "Birthdays", "Convocation", "Events", "Conferences", "Video coverage", "Fashion films", "Documentaries"];
 
 function Hero() {
   const ready = useReady();
@@ -76,7 +78,7 @@ function Hero() {
         <div>
           <h1 className="display" id="hero-title" ref={title} style={hidden}><span className="ln"><span>Riah</span></span><span className="ln"><span>Visuals<span className="hl">.</span></span></span></h1>
           <p className="lead hero__line" ref={line} style={hidden}>
-            {SITE.role}, and official photographer for <a href="https://www.instagram.com/fazzy_d__/" target="_blank" rel="noopener">@fazzy_d_</a>. {SITE.line}
+            {SITE.role}. {SITE.line}
           </p>
           <div className="hero__ctas" ref={ctas} style={hidden}>
             <Link className="btn btn--accent" to="/book">Book a shoot</Link>
@@ -97,99 +99,135 @@ function Hero() {
   );
 }
 
-function Reels() {
-  const { openReels } = useViewers();
-  const { track, state, prev, next } = useTrackArrows();
+/* A short statement about Seraiah. Each line lights up as it scrolls into view. */
+function Intro() {
+  const words = `I'm ${SITE.name}. I shoot fashion, lifestyle, portraits, convocations, events and documentary films, and I plan the colour around every look so your photos come out bold and true to you.`.split(" ");
   return (
-    <section className="section" aria-labelledby="reels-title">
-      <div className="wrap">
-        <div className="sec-head rv">
-          <div><h2 className="display h2" id="reels-title">Latest reels</h2><p className="lead">Tap any reel to watch it with sound.</p></div>
-          <div className="arrows" hidden={!state.show}>
-            <button className="arrow" type="button" aria-label="Scroll reels left" disabled={state.start} onClick={prev}><Icon name="left" /></button>
-            <button className="arrow" type="button" aria-label="Scroll reels right" disabled={state.end} onClick={next}><Icon name="right" /></button>
-          </div>
+    <section className="intro section" aria-labelledby="intro-title">
+      <div className="wrap intro__grid">
+        <figure className="intro__me rv">
+          <img src={SITE.about.photo} alt={`Portrait of ${SITE.name}`} loading="lazy" />
+        </figure>
+        <div>
+          <h2 className="sr" id="intro-title">About {SITE.name}</h2>
+          <p className="intro__text">{words.map((w, i) => <span key={i}>{w} </span>)}</p>
+          <Link className="btn btn--line" to="/about" style={{ marginTop: 32 }}>More about {SITE.name}<Icon name="arrow" /></Link>
         </div>
-        <div className="reels" ref={track}>{SITE.reels.map((r, i) => <ReelCard key={r.id} reel={r} onOpen={() => openReels(SITE.reels, i)} />)}</div>
       </div>
     </section>
   );
 }
 
+/* Films: one plays at a time on a big screen, in full (never cropped), and the next takes over on its own. */
+const FILMS = ["welum", "estaz", "waterfront", "white-dress"].map(R);
+const FILM_MS = 7000;
+function Films() {
+  const { openReels } = useViewers();
+  const [cur, setCur] = useState(0);
+  const [hold, setHold] = useState(false);
+  const [seen, setSeen] = useState(false);
+  const root = useRef(null), vids = useRef([]);
+  useEffect(() => { const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.35 }); io.observe(root.current); return () => io.disconnect(); }, []);
+  useEffect(() => {
+    vids.current.forEach((v, i) => { if (!v) return; if (i === cur && seen) { if (!v.src) v.src = FILMS[i].loop; v.play().catch(() => {}); } else v.pause(); });
+  }, [cur, seen]);
+  useEffect(() => {
+    if (!seen || hold || reduceMotion()) return;
+    const t = setTimeout(() => setCur((c) => (c + 1) % FILMS.length), FILM_MS);
+    return () => clearTimeout(t);
+  }, [cur, seen, hold]);
+  const f = FILMS[cur];
+  return (
+    <section className="section" aria-labelledby="films-title" ref={root}>
+      <div className="wrap">
+        <div className="sec-head rv">
+          <h2 className="display h2" id="films-title">Films</h2>
+          <Link className="btn btn--line btn--sm" to="/portfolio#films">All films<Icon name="arrow" /></Link>
+        </div>
+        <div className={`stage rv${hold ? " is-held" : ""}`} onPointerEnter={() => canHover() && setHold(true)} onPointerLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)}>
+          {FILMS.map((x, i) => <img key={x.id} className={`stage__bg${i === cur ? " on" : ""}`} src={x.poster} alt="" aria-hidden="true" loading="lazy" />)}
+          <div className="stage__screen">
+            {FILMS.map((x, i) => (
+              <video key={x.id} ref={(el) => (vids.current[i] = el)} className={i === cur ? "on" : ""} poster={x.poster} muted loop playsInline preload="none" aria-hidden="true" />
+            ))}
+          </div>
+          <div className="stage__info" key={f.id}>
+            <p className="stage__kind">{kindName(f.kind)} / {f.length}</p>
+            <h3>{f.title}</h3>
+            <p>{f.note}</p>
+            <button className="btn btn--white" type="button" onClick={() => openReels(FILMS, cur)}><Icon name="play" />Watch with sound</button>
+          </div>
+          <div className="stage__list" role="group" aria-label="Choose a film">
+            {FILMS.map((x, i) => (
+              <button key={x.id} type="button" aria-pressed={i === cur} onClick={() => setCur(i)}>
+                <span className="stage__bar"><i key={`${cur}-${i}`} /></span>
+                <b>{x.title}</b>
+                <span>{kindName(x.kind)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Fashion and lifestyle photos in three columns that drift at different speeds as you scroll. */
 function Photos() {
   const { openPhotos } = useViewers();
-  const picks = [0, 1, 4, 3, 2].map((i) => SITE.photos[i]);
+  const picks = SITE.photos.filter((p) => p.kind === "fashion").slice(0, 12);
+  const cols = [0, 1, 2].map((c) => picks.filter((_, i) => i % 3 === c));
   return (
     <section className="section" aria-labelledby="photos-title">
       <div className="wrap">
         <div className="sec-head rv">
-          <div><h2 className="display h2" id="photos-title">Photos</h2><p className="lead">Tap a photo to see it full size.</p></div>
-          <Link className="btn btn--line btn--sm" to="/portfolio#photos">See all photos<Icon name="arrow" /></Link>
+          <div><h2 className="display h2" id="photos-title">Fashion & lifestyle</h2><p className="lead">Colour is the point. Tap any photo to see it full size.</p></div>
+          <Link className="btn btn--line btn--sm" to="/portfolio?k=fashion#photos">All photos<Icon name="arrow" /></Link>
         </div>
-        <div className="bento">
-          {picks.map((p, n) => (
-            <div key={p.src} className={`b${n + 1} rv`}>
-              <button type="button" aria-label={`View ${p.title} full size`} onClick={() => openPhotos(picks, n)}>
-                <Pic base={baseOf(p)} alt={p.title} sizes={n === 0 ? "(max-width: 860px) 100vw, 34vw" : "(max-width: 860px) 50vw, 34vw"} />
-              </button>
+        <div className="drift">
+          {cols.map((col, c) => (
+            <div key={c} className={`drift__col drift__col--${c}`}>
+              {col.map((p) => (
+                <button key={p.src} type="button" className="drift__tile" aria-label={`View ${p.title} full size`} onClick={() => openPhotos(picks, picks.indexOf(p))}>
+                  <Pic base={baseOf(p)} alt={p.title} sizes="(max-width: 700px) 50vw, 33vw" width={p.w} height={p.h} />
+                </button>
+              ))}
             </div>
           ))}
-          <Link className="b6 rv" to="/portfolio#photos"><p>{SITE.photos.length} photos: street style, portraits, convocations and final-year week.</p><span className="link">See all photos<Icon name="arrow" /></span></Link>
         </div>
       </div>
     </section>
   );
 }
 
-function ShootMedia({ k, className }) {
-  if (k.video) return <video className={className} src={k.video} poster={`${k.img}.jpg`} muted loop playsInline preload="none" aria-hidden="true" />;
-  return <Pic base={k.img} alt={k.name} sizes="(max-width: 860px) 100vw, 40vw" className={className} />;
-}
-
+/* What I shoot: every service on its own card, with the work, what it covers and two plain buttons. */
 function WhatIShoot() {
-  const [active, setActive] = useState(0);
-  const screen = useRef(null);
-  useEffect(() => { [...screen.current.children].forEach((m, j) => { if (m.tagName === "VIDEO") { if (j === active) m.play().catch(() => {}); else m.pause(); } }); }, [active]);
   return (
     <section className="section" aria-labelledby="svc-title">
       <div className="wrap">
         <div className="sec-head rv">
-          <div><h2 className="display h2" id="svc-title">What I shoot</h2><p className="lead">Four kinds of shoot. Pick one to see the work, then book it.</p></div>
-          <Link className="btn btn--line btn--sm" to="/services">All services</Link>
+          <div><h2 className="display h2" id="svc-title">What I shoot</h2><p className="lead">Six services in photos and video. Book one straight away, or see the work first.</p></div>
+          <Link className="btn btn--line btn--sm" to="/services">All service details<Icon name="arrow" /></Link>
         </div>
-        <div className="shoot">
-          <div className="shoot__screen" ref={screen} aria-hidden="true">{SITE.kinds.map((k, i) => <ShootMedia key={k.id} k={k} className={i === active ? "on" : ""} />)}</div>
-          <ol className="shoot__list">
-            {SITE.kinds.map((k, i) => (
-              <li key={k.id} className={`srow${i === active ? " on" : ""}`} onPointerEnter={() => canHover() && setActive(i)} onFocus={() => setActive(i)}>
-                <span className="srow__media">{k.video ? <LazyLoop src={k.video} poster={`${k.img}.jpg`} /> : <Pic base={k.img} alt={k.name} sizes="100vw" />}</span>
-                <Link className="srow__name" to={`/services#${k.id}`}>{k.name}</Link>
-                <Link className="srow__go" to={`/services#${k.id}`} aria-label={`See ${k.name}`}><Icon name="arrow" /></Link>
-                <div className="srow__body">
-                  <p>{k.line}</p>
-                  <div className="srow__chips">{k.gets.map((g) => <span key={g}>{g}</span>)}</div>
-                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                    <Link className="btn btn--accent btn--sm" to={`/book?kind=${k.id}`}>Book this</Link>
-                    <Link className="btn btn--line btn--sm" to={`/portfolio?k=${k.id}#photos`}>See examples</Link>
-                  </div>
+        <div className="offer">
+          {SITE.services.map((s, i) => (
+            <article key={s.id} className="offer__card rv" aria-labelledby={`o-${s.id}`}>
+              <Link className="offer__media" to={`/services#${s.id}`} tabIndex={-1} aria-hidden="true">
+                <ServiceMedia s={s} className="offer__pics" sizes="(max-width: 700px) 50vw, 17vw" />
+              </Link>
+              <div className="offer__body">
+                <p className="offer__type"><Icon name={s.type === "video" ? "video" : "camera"} />{s.type === "video" ? "Video" : "Photography"}</p>
+                <h3 id={`o-${s.id}`}>{s.name}</h3>
+                <p className="offer__covers">{s.covers}</p>
+                <div className="offer__btns">
+                  <Link className="btn btn--accent btn--sm" to={`/book?service=${s.id}`}>Book</Link>
+                  <Link className="btn btn--line btn--sm" to={s.see}>See the work<Icon name="arrow" /></Link>
                 </div>
-              </li>
-            ))}
-          </ol>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
-    </section>
-  );
-}
-
-function Credit() {
-  return (
-    <section className="section" aria-label={`About ${SITE.name}`}>
-      <div className="wrap"><div className="credit rv">
-        <span className="credit__img"><img src="/media/riah/profile.jpg" alt={SITE.name} loading="lazy" /></span>
-        <div><p className="small" style={{ fontWeight: 700 }}>Who you'll work with</p><h2 className="display h2" style={{ marginTop: 8 }}>{SITE.name}, official photographer for @fazzy_d_</h2></div>
-        <Link className="btn btn--ink" to="/about">About {SITE.name}</Link>
-      </div></div>
     </section>
   );
 }
@@ -198,23 +236,39 @@ export function Steps() {
   return <ol className="steps">{SITE.about.steps.map((s) => <li key={s.name} className="rv"><h3 className="h3">{s.name}</h3><p>{s.note}</p></li>)}</ol>;
 }
 
+function Questions() {
+  return (
+    <section className="section" aria-labelledby="faq-title">
+      <div className="wrap faq-split">
+        <div className="rv">
+          <h2 className="display h2" id="faq-title">Questions</h2>
+          <p className="lead" style={{ marginTop: 14 }}>Something else on your mind? Ask me on Instagram.</p>
+          <a className="btn btn--line" href={SITE.instagram} target="_blank" rel="noopener" style={{ marginTop: 26 }}><Icon name="ig" />{SITE.handle}</a>
+        </div>
+        <Faq />
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
-  usePageTitle("Riah Visuals, mobile photographer and videographer");
+  usePageTitle("Riah Visuals, photographer and videographer");
   const seq = WORDS.map((w) => <span key={w}>{w}<i aria-hidden="true">/</i></span>);
   return (
     <>
       <Hero />
       <div className="ticker" aria-hidden="true"><div className="ticker__row">{seq}{WORDS.map((w) => <span key={w + "2"}>{w}<i>/</i></span>)}</div></div>
-      <Reels />
+      <Intro />
+      <Films />
       <Photos />
       <WhatIShoot />
-      <Credit />
       <section className="section" aria-labelledby="how-title">
         <div className="wrap">
-          <div className="sec-head rv"><div><h2 className="display h2" id="how-title">How booking works</h2><p className="lead">Four easy steps from first message to finished photos.</p></div></div>
+          <div className="sec-head rv"><div><h2 className="display h2" id="how-title">How booking works</h2><p className="lead">From first message to finished photos.</p></div></div>
           <Steps />
         </div>
       </section>
+      <Questions />
     </>
   );
 }

@@ -70,7 +70,7 @@ function StoryViewer({ state, setState }) {
           <span className="story__kind">{kindName(r.kind)}</span>
           <h2 className="h3">{r.title}</h2>
           <p>{r.note}</p>
-          {r.post && <a className="story__ig" href={r.post} target="_blank" rel="noopener">View project on Instagram<Icon name="ext" /></a>}
+          {r.post && <a className="story__ig" href={r.post} target="_blank" rel="noopener">View project<Icon name="ext" /></a>}
         </div>
         <button className="story__nav story__nav--prev" type="button" aria-label="Previous reel" onClick={() => go(-1)}><Icon name="left" /></button>
         <button className="story__nav story__nav--next" type="button" aria-label="Next reel" onClick={() => go(1)}><Icon name="right" /></button>
@@ -115,7 +115,7 @@ function Lightbox({ state, setState }) {
         <div className="lightbox__info">
           <b>{p.title}</b>
           <span>{[kindName(p.kind), p.credit].filter(Boolean).join(" / ")}</span>
-          {p.post && <a className="story__ig" href={p.post} target="_blank" rel="noopener">View project on Instagram<Icon name="ext" /></a>}
+          {p.post && <a className="story__ig" href={p.post} target="_blank" rel="noopener">View project<Icon name="ext" /></a>}
           <span className="lightbox__hint"><Icon name="zoom" />Tap the photo to zoom</span>
         </div>
         <div className="lightbox__thumbs" ref={thumbs}>

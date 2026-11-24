@@ -24,7 +24,7 @@ function Cinema() {
           <div><span className="cinema__kind">{kindName(r.kind)} / {r.length}</span><h3>{r.title}</h3><p>{r.note}</p></div>
           <div className="cinema__btns">
             <button className="btn btn--accent" type="button" onClick={() => openReels(SITE.reels, cur)}><Icon name="play" />Watch with sound</button>
-            {r.post && <a className="btn btn--glass" href={r.post} target="_blank" rel="noopener" aria-label={`View project: ${r.title}, opens the Instagram post`}>View project<Icon name="ext" /></a>}
+            {r.post && <a className="btn btn--glass" href={r.post} target="_blank" rel="noopener" aria-label={`View project: ${r.title}`}>View project<Icon name="ext" /></a>}
           </div>
         </div>
       </div>
@@ -40,34 +40,49 @@ function Cinema() {
   );
 }
 
-/* Photographs: filter by kind, then open any one full size or jump to its Instagram post. */
+/* Photographs: filter by kind, then open any one full size. Photos fill balanced columns in reading order. */
+const useCols = () => {
+  const q = () => (innerWidth <= 640 ? 2 : innerWidth <= 1000 ? 3 : 4);
+  const [n, setN] = useState(q);
+  useEffect(() => { const on = () => setN(q()); addEventListener("resize", on); return () => removeEventListener("resize", on); }, []);
+  return n;
+};
 function Gallery() {
   const { openPhotos } = useViewers();
   const [params, setParams] = useSearchParams();
-  const kinds = [{ id: "all", name: "All" }, ...SITE.kinds.filter((k) => SITE.photos.some((p) => p.kind === k.id))];
+  const kinds = [{ id: "all", short: "All" }, ...SITE.kinds.filter((k) => SITE.photos.some((p) => p.kind === k.id))];
   const k = kinds.some((x) => x.id === params.get("k")) ? params.get("k") : "all";
   const shown = SITE.photos.filter((p) => k === "all" || p.kind === k);
   const count = (id) => (id === "all" ? SITE.photos.length : SITE.photos.filter((p) => p.kind === id).length);
   const setK = (id) => setParams(id === "all" ? {} : { k: id }, { replace: true, preventScrollReset: true });
+  const n = useCols();
+  const cols = Array.from({ length: n }, () => ({ h: 0, items: [] }));
+  shown.forEach((p, i) => { const c = cols.reduce((a, b) => (b.h < a.h ? b : a)); c.items.push([p, i]); c.h += p.h / p.w; });
+  const idx = kinds.findIndex((x) => x.id === k);
   return (
     <>
       <div className="pf-bar">
-        <div className="tabs" role="group" aria-label="Filter photographs">
-          {kinds.map((x) => <button key={x.id} className="tab" type="button" aria-pressed={x.id === k} onClick={() => setK(x.id)}>{x.short || x.name}<span className="n">{count(x.id)}</span></button>)}
+        <div className="seg seg--wide" role="group" aria-label="Filter photographs" style={{ "--i": idx, "--n": kinds.length }}>
+          <span className="seg__pill" aria-hidden="true" />
+          {kinds.map((x) => <button key={x.id} type="button" aria-pressed={x.id === k} onClick={() => setK(x.id)}>{x.short}<span className="n">{count(x.id)}</span></button>)}
         </div>
-        <p className="small" aria-live="polite">Showing {shown.length} of {SITE.photos.length}</p>
       </div>
-      <div className="gallery">
-        {shown.map((p, i) => (
-          <figure key={p.src} className="tile rv in">
-            <button type="button" aria-label={`View ${p.title} full size`} onClick={() => openPhotos(shown, i)}>
-              <Pic base={baseOf(p)} alt={p.title} sizes="(max-width: 640px) 50vw, (max-width: 1000px) 50vw, 33vw" width={p.w} height={p.h} />
-            </button>
-            <figcaption className="tile__cap">
-              <span><b>{p.title}</b><small>{p.credit || kindName(p.kind)}</small></span>
-              {p.post && <a className="tile__project" href={p.post} target="_blank" rel="noopener" aria-label={`View project: ${p.title}, opens the Instagram post`}>View project<Icon name="ext" /></a>}
-            </figcaption>
-          </figure>
+      <div className="wall" key={k + n} style={{ "--cols": n }}>
+        {cols.map((c, ci) => (
+          <div key={ci} className="wall__col">
+            {c.items.map(([p, i]) => (
+              <figure key={p.src} className="wtile" style={{ "--d": `${Math.min(i, 12) * 45}ms` }}>
+                <button type="button" aria-label={`View ${p.title} full size`} onClick={() => openPhotos(shown, i)} style={{ aspectRatio: `${p.w} / ${p.h}` }}>
+                  <Pic base={baseOf(p)} alt={p.title} sizes={`(max-width: 640px) 50vw, (max-width: 1000px) 33vw, 25vw`} width={p.w} height={p.h} />
+                  <span className="wtile__zoom" aria-hidden="true"><Icon name="zoom" /></span>
+                </button>
+                <figcaption>
+                  <span><b>{p.title}</b><small>{kindName(p.kind)}</small></span>
+                  {p.post && <a href={p.post} target="_blank" rel="noopener" aria-label={`View project: ${p.title}`}>View project<Icon name="ext" /></a>}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
         ))}
       </div>
     </>
@@ -81,13 +96,13 @@ export default function Portfolio() {
       <header className="pf-head">
         <div>
           <h1 className="display">Portfolio</h1>
-          <p className="lead" style={{ marginTop: 18, maxWidth: "48ch" }}>Films and photographs, all shot on phone. Press play on a film, or open any photo full size.</p>
+          <p className="lead" style={{ marginTop: 18, maxWidth: "48ch" }}>Fashion films, documentaries and photographs. Press play on a film, or open any photo full size.</p>
           <nav className="pf-jump" aria-label="Jump to"><a className="btn btn--ink btn--sm" href="#films">Films</a><a className="btn btn--line btn--sm" href="#photos">Photographs</a></nav>
         </div>
         <div className="pf-stats">
           <div><b>{SITE.reels.length}</b><span>films</span></div>
           <div><b>{SITE.photos.length}</b><span>photographs</span></div>
-          <div><b>{SITE.kinds.length}</b><span>kinds of shoot</span></div>
+          <div><b>{SITE.services.length}</b><span>services</span></div>
         </div>
       </header>
       <section id="films" aria-labelledby="films-title" style={{ scrollMarginTop: 100 }}>
@@ -95,7 +110,7 @@ export default function Portfolio() {
         <Cinema />
       </section>
       <section id="photos" className="section" aria-labelledby="photos-title" style={{ scrollMarginTop: 90 }}>
-        <div className="sec-head rv"><div><h2 className="display h2" id="photos-title">Photographs</h2><p className="lead">Tap a photo to see it full size, with who it was shot for.</p></div></div>
+        <div className="sec-head rv"><div><h2 className="display h2" id="photos-title">Photographs</h2><p className="lead">Fashion, lifestyle, portraits and events. Tap a photo to see it full size.</p></div></div>
         <Gallery />
       </section>
     </div>

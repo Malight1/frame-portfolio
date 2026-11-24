@@ -22,7 +22,7 @@ void main(){
   vec2 pp = (uPtr - .5) * vec2(a, 1.);
   f += field(q, pp, .12 * uPull * uIn);
   float edge = smoothstep(.95, 1.05, f);
-  vec3 deep = vec3(1., .30, .07), hot = vec3(1., .48, .18), light = vec3(1., .74, .52);
+  vec3 deep = vec3(.06, .14, .36), hot = vec3(.12, .27, .62), light = vec3(.55, .68, .93);
   float core = smoothstep(1., 3.2, f);
   vec3 col = mix(hot, deep, core);
   float rim = smoothstep(1.05, 1.0, f) * edge;
