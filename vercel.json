@@ -19,7 +19,7 @@
     { "source": "/photography.html", "destination": "/portfolio", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/((?!assets/|media/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|media/|api/).*)", "destination": "/index.html" }
   ],
   "headers": [
     {

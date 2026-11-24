@@ -1,6 +1,5 @@
 // Edit this file to change the site's content. Every page reads from here.
 // Reels and photos are Riah's own work: Instagram posts, his Pixieset galleries and films he sent us.
-// PLACEHOLDER: the email address still needs confirming with Riah.
 // Media lives in public/media/riah. Photos come in three widths (pNN-s 640, pNN-m 1100, pNN full),
 // each as .webp (served first) and .jpg (fallback).
 
@@ -15,7 +14,7 @@ export const SITE = {
   line: "Fashion, portraits, convocations, events and documentary films.",
   instagram: "https://www.instagram.com/riah_visuals/",
   handle: "@riah_visuals",
-  email: "hello@riahvisuals.com",
+  email: "seraiahamaike98@gmail.com",
   gallery: PIX,
 
   // The four groups used to filter the portfolio and on the Home page

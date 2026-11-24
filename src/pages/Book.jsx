@@ -34,6 +34,9 @@ export default function Book() {
   const [v, setV] = useState({ need: preNeed, service: pre ? pre.id : "", client: "", email: "", phone: "", date: "", where: "", message: "" });
   const [err, setErr] = useState({});
   const [done, setDone] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const trap = useRef(null);
   const refs = { need: useRef(null), service: useRef(null), client: useRef(null), email: useRef(null), message: useRef(null) };
   const doneRef = useRef(null);
 
@@ -46,16 +49,31 @@ export default function Book() {
   };
   const groups = v.need === "photo" ? [["Photography", PHOTO]] : v.need === "video" ? [["Videography", VIDEO]] : [["Photography", PHOTO], ["Videography", VIDEO]];
 
-  const submit = (e) => {
+  const mailto = () => {
+    const need = (NEEDS.find((n) => n.id === v.need) || {}).name || "";
+    const body = [`Name: ${v.client.trim()}`, `Email: ${v.email.trim()}`, `Phone: ${v.phone.trim() || "Not given"}`, `I need: ${need}`, `Shoot: ${nameOf(v.service)}`, `Date: ${fmtDate(v.date) || "Not set yet"}`, `Where: ${v.where.trim() || "Not set yet"}`, "", v.message.trim()].join("\n");
+    return `mailto:${SITE.email}?subject=${encodeURIComponent(`Booking: ${nameOf(v.service)}`)}&body=${encodeURIComponent(body)}`;
+  };
+  const submit = async (e) => {
     e.preventDefault();
+    if (sending) return;
     const found = check(v); setErr(found);
     const first = ORDER.find((k) => found[k]);
     if (first) { (first === "need" ? refs.need.current.querySelector("input") : refs[first].current).focus(); return; }
-    const need = NEEDS.find((n) => n.id === v.need).name;
-    const body = [`Name: ${v.client.trim()}`, `Email: ${v.email.trim()}`, `Phone: ${v.phone.trim() || "Not given"}`, `I need: ${need}`, `Shoot: ${nameOf(v.service)}`, `Date: ${fmtDate(v.date) || "Not set yet"}`, `Where: ${v.where.trim() || "Not set yet"}`, "", v.message.trim()].join("\n");
-    setDone(true);
-    setTimeout(() => doneRef.current?.focus(), 0);
-    window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(`Booking: ${nameOf(v.service)}`)}&body=${encodeURIComponent(body)}`;
+    setSending(true); setFailed(false);
+    try {
+      const r = await fetch("/api/book", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client: v.client, email: v.email, phone: v.phone, need: (NEEDS.find((n) => n.id === v.need) || {}).name, service: nameOf(v.service), date: fmtDate(v.date), where: v.where, message: v.message, company: trap.current?.value || "" }),
+      });
+      if (!r.ok) throw new Error(String(r.status));
+      setDone(true);
+      setTimeout(() => doneRef.current?.focus(), 0);
+    } catch {
+      setFailed(true);
+    } finally {
+      setSending(false);
+    }
   };
   const field = (k) => ({ "aria-invalid": !!err[k], "aria-describedby": `e-${k}` });
   const summary = [
@@ -117,17 +135,19 @@ export default function Book() {
                 </div>
               </div>
 
-              <div className="form__foot"><button className="btn btn--accent" type="submit">Send booking request<Icon name="arrow" /></button><p>This opens your email app with everything filled in. Nothing is sent until you press send.</p></div>
+              <input ref={trap} name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="trap" />
+              {failed && <div className="send-fail" role="alert"><b>That didn't send.</b> Please try again, <a href={mailto()}>send it by email instead</a>, or <a href={SITE.instagram} target="_blank" rel="noopener">message me on Instagram</a>.</div>}
+              <div className="form__foot"><button className="btn btn--accent" type="submit" disabled={sending} aria-busy={sending}>{sending ? "Sending..." : <>Send booking request<Icon name="arrow" /></>}</button><p>Your request comes straight to me. I'll reply by email with a plan and a price.</p></div>
             </form>
           ) : (
             <div className="done" role="status" tabIndex={-1} ref={doneRef}>
               <span className="done__tick" aria-hidden="true"><Icon name="check" /></span>
-              <h2 className="display h2">Thanks, {v.client.trim().split(" ")[0]}. Your request is ready.</h2>
-              <p>Your email app should have opened with the request written out. Press send there and I'll reply with a plan and a price.</p>
-              <p>Nothing opened? Message me on Instagram instead.</p>
+              <h2 className="display h2">Thanks, {v.client.trim().split(" ")[0]}. Your request is sent.</h2>
+              <p>I'll reply to {v.email.trim()} with a plan and a price.</p>
+              <p>Need an answer sooner? Message me on Instagram.</p>
               <div className="row">
                 <a className="btn btn--ink" href={SITE.instagram} target="_blank" rel="noopener"><Icon name="ig" />Message on Instagram</a>
-                <button className="btn btn--line" type="button" onClick={() => setDone(false)}>Edit my request</button>
+                <button className="btn btn--line" type="button" onClick={() => { setDone(false); setV({ need: "", service: "", client: "", email: "", phone: "", date: "", where: "", message: "" }); }}>Send another request</button>
               </div>
             </div>
           )}

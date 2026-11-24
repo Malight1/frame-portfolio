@@ -727,3 +727,9 @@ fieldset[aria-describedby] .err { margin-top: 10px; }
   .h2 { font-size: clamp(2rem, 9.5vw, 2.6rem); }
 }
 @media (max-width: 640px) { .seg--wide .n { display: none; } .seg--wide button { padding: 0 4px; } }
+
+/* Booking form: hidden bot trap, failure message, disabled button while sending */
+.trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.send-fail { border-radius: 14px; background: #fdecea; color: #7a1d12; padding: 14px 16px; font-size: 15px; line-height: 1.5; }
+.send-fail a { color: inherit; font-weight: 700; text-decoration: underline; }
+.btn:disabled { opacity: .7; cursor: progress; transform: none; }
