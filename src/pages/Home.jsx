@@ -240,11 +240,11 @@ function Questions() {
   return (
     <section className="section" aria-labelledby="faq-title">
       <div className="wrap faq-split">
-        <Faq />
         <div className="rv">
-          <h2 className="display h2" id="faq-title">Questions</h2>
+          <h2 className="display h2" id="faq-title" style={{ paddingBottom: "1rem" }}>Questions</h2>
+          <Faq />
           <p className="lead" style={{ marginTop: 14 }}>Something else on your mind? Ask me on Instagram.</p>
-          <a className="btn btn--line" href={SITE.instagram} target="_blank" rel="noopener" style={{ marginTop: 26 }}><Icon name="ig" />{SITE.handle}</a>
+          <a className="btn btn--line" href={SITE.instagram} target="_blank" rel="noopener" style={{ marginTop: 12 }}><Icon name="ig" />{SITE.handle}</a>
         </div>
       </div>
     </section>
